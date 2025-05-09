@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bethezank Lab - 3D Cubes Space</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- เพิ่มลิงก์ของฟอนต์ Prompt จาก Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+      font-family: 'Prompt', sans-serif; /* ใช้ฟอนต์ Prompt */
+    }
+
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    .cube {
+      position: absolute;
+      transform-style: preserve-3d;
+      animation: rotate 20s infinite linear;
+      z-index: 1;
+    }
+
+    .face {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    }
+
+    @keyframes rotate {
+      0% { transform: rotateX(0) rotateY(0); }
+      100% { transform: rotateX(360deg) rotateY(360deg); }
+    }
+
+    .light-spot {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+      filter: blur(80px);
+      z-index: 2;
+      transition: transform 0.05s linear;
+    }
+
+    .login-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(15px);
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
+      z-index: 3;
+      width: 340px;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="light-spot" id="lightSpot"></div>
+
+  <!-- Login Card -->
+  <div class="login-container">
+    <div class="app-title text-center text-white text-3xl font-bold mb-6">Bethezank Lab</div>
+    <input type="text" placeholder="Username" class="w-full p-3 mb-4 text-white bg-transparent border-2 border-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50" />
+    <input type="password" placeholder="Password" class="w-full p-3 mb-6 text-white bg-transparent border-2 border-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50" />
+    <button id="loginButton" class="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition duration-200">Login</button>
+  </div>
+
+  <script>
+    // Stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.animationDuration = `${2 + Math.random() * 2}s`;
+      starsContainer.appendChild(star);
+    }
+
+    // Cubes
+    for (let i = 0; i < 20; i++) {
+      const cube = document.createElement('div');
+      cube.className = 'cube';
+
+      const size = 30 + Math.random() * 60;
+      cube.style.width = `${size}px`;
+      cube.style.height = `${size}px`;
+      cube.style.top = `${Math.random() * 100}%`;
+      cube.style.left = `${Math.random() * 100}%`;
+      cube.style.animationDuration = `${10 + Math.random() * 20}s`;
+
+      for (let j = 0; j < 6; j++) {
+        const face = document.createElement('div');
+        face.className = 'face';
+        face.style.width = `${size}px`;
+        face.style.height = `${size}px`;
+
+        switch (j) {
+          case 0: face.style.transform = `rotateY(0deg) translateZ(${size / 2}px)`; break;
+          case 1: face.style.transform = `rotateY(90deg) translateZ(${size / 2}px)`; break;
+          case 2: face.style.transform = `rotateY(180deg) translateZ(${size / 2}px)`; break;
+          case 3: face.style.transform = `rotateY(-90deg) translateZ(${size / 2}px)`; break;
+          case 4: face.style.transform = `rotateX(90deg) translateZ(${size / 2}px)`; break;
+          case 5: face.style.transform = `rotateX(-90deg) translateZ(${size / 2}px)`; break;
+        }
+
+        cube.appendChild(face);
+      }
+
+      document.body.appendChild(cube);
+    }
+
+    // Mouse light
+    const lightSpot = document.getElementById('lightSpot');
+    document.addEventListener('mousemove', (e) => {
+      lightSpot.style.transform = `translate(${e.clientX - 300}px, ${e.clientY - 300}px)`;
+    });
+
+    // Login Button - SweetAlert
+    document.getElementById('loginButton').addEventListener('click', () => {
+      Swal.fire({
+        title: 'สวัสดีครับ!!',
+        text: 'คุณเข้ามาที่โปรแกรมทดลอง... อย่าเพิ่งตกใจ 😜\nลองเล่นไปก่อนนะครับ!',
+        icon: 'info',
+        confirmButtonText: 'โอเค ฉันเข้าใจแล้ว!',
+        confirmButtonColor: '#4CAF50'
+      });
+    });
+  </script>
+</body>
+</html>
