@@ -1,167 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bethezank Lab - 3D Cubes Space</title>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bethezank Lab - 3D Cubes Space</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <!-- เพิ่มลิงก์ของฟอนต์ Prompt จาก Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background: black;
-      font-family: 'Prompt', sans-serif; /* ใช้ฟอนต์ Prompt */
-    }
-
-    .stars {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-
-    .star {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.3;
-      animation: twinkle 2s infinite ease-in-out;
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
-    }
-
-    .cube {
-      position: absolute;
-      transform-style: preserve-3d;
-      animation: rotate 20s infinite linear;
-      z-index: 1;
-    }
-
-    .face {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-    }
-
-    @keyframes rotate {
-      0% { transform: rotateX(0) rotateY(0); }
-      100% { transform: rotateX(360deg) rotateY(360deg); }
-    }
-
-    .light-spot {
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
-      pointer-events: none;
-      mix-blend-mode: screen;
-      filter: blur(80px);
-      z-index: 2;
-      transition: transform 0.05s linear;
-    }
-
-    .login-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(15px);
-      padding: 30px 25px;
-      border-radius: 20px;
-      box-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
-      z-index: 3;
-      width: 340px;
-    }
-  </style>
-</head>
-<body>
-  <div class="stars" id="stars"></div>
-  <div class="light-spot" id="lightSpot"></div>
-
-  <!-- Login Card -->
-  <div class="login-container">
-    <div class="app-title text-center text-white text-3xl font-bold mb-6">Bethezank Lab</div>
-    <input type="text" placeholder="Username" class="w-full p-3 mb-4 text-white bg-transparent border-2 border-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50" />
-    <input type="password" placeholder="Password" class="w-full p-3 mb-6 text-white bg-transparent border-2 border-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50" />
-    <button id="loginButton" class="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition duration-200">Login</button>
-  </div>
-
-  <script>
-    // Stars
-    const starsContainer = document.getElementById('stars');
-    for (let i = 0; i < 200; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      star.style.top = `${Math.random() * 100}%`;
-      star.style.left = `${Math.random() * 100}%`;
-      star.style.animationDuration = `${2 + Math.random() * 2}s`;
-      starsContainer.appendChild(star);
-    }
-
-    // Cubes
-    for (let i = 0; i < 20; i++) {
-      const cube = document.createElement('div');
-      cube.className = 'cube';
-
-      const size = 30 + Math.random() * 60;
-      cube.style.width = `${size}px`;
-      cube.style.height = `${size}px`;
-      cube.style.top = `${Math.random() * 100}%`;
-      cube.style.left = `${Math.random() * 100}%`;
-      cube.style.animationDuration = `${10 + Math.random() * 20}s`;
-
-      for (let j = 0; j < 6; j++) {
-        const face = document.createElement('div');
-        face.className = 'face';
-        face.style.width = `${size}px`;
-        face.style.height = `${size}px`;
-
-        switch (j) {
-          case 0: face.style.transform = `rotateY(0deg) translateZ(${size / 2}px)`; break;
-          case 1: face.style.transform = `rotateY(90deg) translateZ(${size / 2}px)`; break;
-          case 2: face.style.transform = `rotateY(180deg) translateZ(${size / 2}px)`; break;
-          case 3: face.style.transform = `rotateY(-90deg) translateZ(${size / 2}px)`; break;
-          case 4: face.style.transform = `rotateX(90deg) translateZ(${size / 2}px)`; break;
-          case 5: face.style.transform = `rotateX(-90deg) translateZ(${size / 2}px)`; break;
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Prompt', sans-serif;
         }
 
-        cube.appendChild(face);
-      }
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
 
-      document.body.appendChild(cube);
-    }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: twinkle 2s infinite ease-in-out;
+        }
 
-    // Mouse light
-    const lightSpot = document.getElementById('lightSpot');
-    document.addEventListener('mousemove', (e) => {
-      lightSpot.style.transform = `translate(${e.clientX - 300}px, ${e.clientY - 300}px)`;
-    });
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
 
-    // Login Button - SweetAlert
-    document.getElementById('loginButton').addEventListener('click', () => {
-      Swal.fire({
-        title: 'สวัสดีครับ!!',
-        text: 'คุณเข้ามาที่โปรแกรมทดลอง... อย่าเพิ่งตกใจ 😜\nลองเล่นไปก่อนนะครับ!',
-        icon: 'info',
-        confirmButtonText: 'โอเค ฉันเข้าใจแล้ว!',
-        confirmButtonColor: '#4CAF50'
-      });
-    });
-  </script>
+        .cube {
+            position: absolute;
+            transform-style: preserve-3d;
+            animation: rotate 30s infinite linear;
+            z-index: 1;
+        }
+
+        .face {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes rotate {
+            0% { transform: rotateX(0) rotateY(0); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        .light-spot {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 80%);
+            pointer-events: none;
+            mix-blend-mode: screen;
+            filter: blur(100px);
+            z-index: 2;
+            transition: transform 0.05s linear;
+        }
+
+        canvas#orionCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #redrawButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            padding: 8px 15px; /* Reduced padding */
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex; /* Use flexbox for icon alignment */
+            align-items: center; /* Vertically center icon and text */
+            gap: 5px; /* Space between icon and text */
+        }
+
+        #redrawButton:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: scale(1.05);
+        }
+
+        #redrawButton:active {
+            transform: scale(0.95);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="light-spot" id="lightSpot"></div>
+    <canvas id="orionCanvas"></canvas>
+    <button id="redrawButton"><i class="fas fa-sync-alt"></i> ย้ายตำแหน่งดาว</button>
+
+    <div class="login-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[340px] z-10 bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-lg">
+        <h1 class="text-white text-3xl font-bold text-center mb-6">Bethezank Lab</h1>
+        <input type="text" placeholder="Username" class="w-full p-3 mb-4 text-white bg-transparent border border-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        <input type="password" placeholder="Password" class="w-full p-3 mb-6 text-white bg-transparent border border-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        <button id="loginButton" class="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition">Login</button>
+    </div>
+
+    <script>
+        // ดาวพื้นหลัง
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.animationDuration = `${2 + Math.random() * 2}s`;
+            starsContainer.appendChild(star);
+        }
+
+        // กลุ่มดาว Orion (ดาวนายพราน) - ปรับตำแหน่งให้ใกล้เคียงรูปภาพ
+        const orionStars = [
+            { x: -50, y: -100, size: 4, brightness: 1.0 },  // ไหล่ซ้าย (บนซ้าย)
+            { x: 50, y: -80, size: 5, brightness: 1.0 },   // ไหล่ขวา (บนขวา)
+            { x: -70, y: -40, size: 3, brightness: 0.8 },  // แขนซ้ายบน
+            { x: 90, y: -40, size: 3, brightness: 0.8 },   // แขนขวาบน
+            { x: 0, y: 0, size: 4, brightness: 0.9 },     // เข็มขัดกลาง
+            { x: -40, y: 0, size: 4, brightness: 0.9 },    // เข็มขัดซ้าย
+            { x: 40, y: 0, size: 4, brightness: 0.9 },     // เข็มขัดขวา
+            { x: 0, y: 60, size: 3, brightness: 0.7 },     // ดาบ (บน)
+            { x: 0, y: 90, size: 3, brightness: 0.7 },     // ดาบ (ล่าง)
+            { x: -80, y: 80, size: 4, brightness: 0.9 },   // ขาซ้ายบน
+            { x: 100, y: 80, size: 4, brightness: 0.9 },  // ขาขวาบน
+            { x: -100, y: -140, size: 2, brightness: 0.6 }, // บนซ้ายสุด
+            { x: 120, y: -120, size: 2, brightness: 0.6 }, // บนขวาสุด
+            { x: -120, y: 40, size: 2, brightness: 0.5 },  // ล่างซ้ายสุด
+            { x: 140, y: 40, size: 2, brightness: 0.5 },  // ล่างขวาสุด
+            { x: -20, y: -160, size: 2, brightness: 0.5 }, // บนกลางซ้าย
+            { x: 20, y: -160, size: 2, brightness: 0.5 },  // บนกลางขวา
+            { x: -60, y: 120, size: 2, brightness: 0.4 },  // ล่างซ้าย
+            { x: 60, y: 120, size: 2, brightness: 0.4 }   // ล่างขวา
+        ];
+
+        const canvas = document.getElementById('orionCanvas');
+        const ctx = canvas.getContext('2d');
+        const redrawButton = document.getElementById('redrawButton');
+
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawOrion(); // วาดใหม่เมื่อปรับขนาด
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawOrion() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // คำนวณจุดกึ่งกลางของ Canvas
+            const canvasCenterX = canvas.width / 2;
+            const canvasCenterY = canvas.height / 2;
+
+            // สุ่มตำแหน่ง, ขนาด, และการหมุน
+            const randomX = canvasCenterX + (Math.random() - 0.5) * 0.4 * canvas.width; // สุ่มรอบกึ่งกลาง
+            const randomY = canvasCenterY + (Math.random() - 0.5) * 0.4 * canvas.height; // สุ่มรอบกึ่งกลาง
+            const randomScale = 0.7 + Math.random() * 0.8; // สุ่มขนาด
+            const randomRotation = Math.random() * Math.PI * 2; // สุ่มมุมหมุน
+
+            ctx.save(); // บันทึกสถานะปัจจุบันของ Canvas
+            ctx.translate(randomX, randomY); // ย้ายจุดอ้างอิง
+            ctx.scale(randomScale, randomScale); // ปรับขนาด
+            ctx.rotate(randomRotation); // หมุน
+
+            // ฟังก์ชันวาดเส้นเชื่อมระหว่างดาว
+            function drawConnection(index1, index2) {
+                const star1 = orionStars[index1];
+                const star2 = orionStars[index2];
+                ctx.beginPath();
+                ctx.moveTo(star1.x, star1.y);
+                ctx.lineTo(star2.x, star2.y);
+                ctx.stroke();
+            }
+
+            // วาดเส้นเชื่อมดาวตามรูปภาพ
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.setLineDash([2, 2]); // เส้นประ
+
+            drawConnection(0, 2);   // ไหล่ซ้าย - แขนซ้ายบน
+            drawConnection(1, 3);   // ไหล่ขวา - แขนขวาบน
+            drawConnection(0, 1);   // ไหล่ซ้าย - ไหล่ขวา
+            drawConnection(0, 5);   // ไหล่ซ้าย - เข็มขัดซ้าย
+            drawConnection(1, 6);   // ไหล่ขวา - เข็มขัดขวา
+            drawConnection(5, 4);   // เข็มขัดซ้าย - เข็มขัดกลาง
+            drawConnection(4, 6);   // เข็มขัดกลาง - เข็มขัดขวา
+            drawConnection(4, 7);   // เข็มขัดกลาง - ดาบบน
+            drawConnection(7, 8);   // ดาบบน - ดาบล่าง
+            drawConnection(5, 9);   // เข็มขัดซ้าย - ขาซ้ายบน
+            drawConnection(6, 10);  // เข็มขัดขวา - ขาขวาบน
+            drawConnection(0, 11);  // ไหล่ซ้าย - บนซ้ายสุด
+            drawConnection(1, 12);  // ไหล่ขวา - บนขวาสุด
+            drawConnection(9, 13);  // ขาซ้ายบน - ล่างซ้ายสุด
+            drawConnection(10, 14); // ขาขวาบน - ล่างขวาสุด
+            drawConnection(0, 15);  // ไหล่ซ้าย - บนกลางซ้าย
+            drawConnection(1, 16);  // ไหล่ขวา - บนกลางขวา
+            drawConnection(9, 17);  // ขาซ้ายบน - ล่างซ้าย
+            drawConnection(10, 18); // ขาขวาบน - ล่างขวา
+
+            ctx.setLineDash([]);
+
+            // ฟังก์ชันวาดแสงดาว
+            function drawStar(star) {
+                const glow = ctx.createRadialGradient(
+                    star.x, star.y, 0,
+                    star.x, star.y, star.size * 3
+                );
+                glow.addColorStop(0, `rgba(255, 255, 255, ${star.brightness})`);
+                glow.addColorStop(0.5, `rgba(210, 240, 255, ${star.brightness * 0.5})`);
+                glow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // ฟังก์ชันวาดแสงวาบดาว
+            function drawStarSpikes(x, y, length, brightness) {
+                ctx.strokeStyle = `rgba(255, 255, 255, ${brightness * 0.5})`;
+                ctx.lineWidth = 0.5;
+
+                for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(
+                        x + Math.cos(angle) * length,
+                        y + Math.sin(angle) * length
+                    );
+                    ctx.stroke();
+                }
+            }
+
+            // วาดดาวในกลุ่มดาวนายพราน
+            orionStars.forEach((star, index) => {
+                drawStar(star);
+                // เพิ่มแสงวาบให้กับดาวที่สำคัญ
+                if (index === 0 || index === 1 || index === 4) {
+                    drawStarSpikes(star.x, star.y, star.size * 4, star.brightness);
+                }
+            });
+
+            ctx.restore(); // คืนค่าสถานะ Canvas ก่อนการเปลี่ยนแปลง
+        }
+
+        // เรียกฟังก์ชันวาดดาวนายพราน
+        drawOrion();
+
+        // สร้างลูกบาศก์ 3D (ส่วนนี้ไม่มีการเปลี่ยนแปลง)
+        for (let i = 0; i < 20; i++) {
+            const cube = document.createElement('div');
+            cube.className = 'cube';
+            const size = 30 + Math.random() * 60;
+            cube.style.width = `${size}px`;
+            cube.style.height = `${size}px`;
+            cube.style.top = `${Math.random() * 100}%`;
+            cube.style.left = `${Math.random() * 100}%`;
+            cube.style.animationDuration = `${15 + Math.random() * 15}s`;
+            for (let j = 0; j < 6; j++) {
+                const face = document.createElement('div');
+                face.className = 'face';
+                face.style.width = `${size}px`;
+                face.style.height = `${size}px`;
+                switch (j) {
+                    case 0: face.style.transform = `rotateY(0deg) translateZ(${size / 2}px)`; break;
+                    case 1: face.style.transform = `rotateY(90deg) translateZ(${size / 2}px)`; break;
+                    case 2: face.style.transform = `rotateY(180deg) translateZ(${size / 2}px)`; break;
+                    case 3: face.style.transform = `rotateY(-90deg) translateZ(${size / 2}px)`; break;
+                    case 4: face.style.transform = `rotateX(90deg) translateZ(${size / 2}px)`; break;
+                    case 5: face.style.transform = `rotateX(-90deg) translateZ(${size / 2}px)`; break;
+                }
+                cube.appendChild(face);
+            }
+            document.body.appendChild(cube);
+        }
+
+        // เอฟเฟกต์แสงตามเมาส์ (ส่วนนี้ไม่มีการเปลี่ยนแปลง)
+        const lightSpot = document.getElementById('lightSpot');
+        document.addEventListener('mousemove', (e) => {
+            lightSpot.style.transform = `translate(${e.clientX - 300}px, ${e.clientY - 300}px)`;
+        });
+
+        // ปุ่ม Login (ส่วนนี้ไม่มีการเปลี่ยนแปลง)
+        document.getElementById('loginButton').addEventListener('click', () => {
+            Swal.fire({
+                title: 'สวัสดีครับ!!',
+                text: 'คุณเข้ามาที่โปรแกรมทดลอง... อย่าเพิ่งตกใจ 😜\nลองเล่นไปก่อนนะครับ!',
+                icon: 'info',
+                confirmButtonText: 'โอเค ฉันเข้าใจแล้ว!',
+                confirmButtonColor: '#4CAF50'
+            });
+        });
+
+        // Event listener for the redraw button
+        redrawButton.addEventListener('click', () => {
+            drawOrion();
+        });
+    </script>
 </body>
 </html>
